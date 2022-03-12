@@ -1,5 +1,7 @@
-properties([pipelineTriggers([githubPush()])])
 pipeline {
+    triggers {
+        githubPush()
+    }
     agent any
     tools { 
         maven 'Maven_3.8.4' 
@@ -7,6 +9,7 @@ pipeline {
     }
     stages {
         stage('Checkout SCM') {
+
             steps {
                 checkout([
                  $class: 'GitSCM',
