@@ -45,17 +45,39 @@ pipeline {
             }
         }*/
         stage('DeployToServer') {
-            steps {          
-                sshPublisher(
-                    failOnError: true,
-                    continueOnError: false,
-                    publishers: [
-                        sshPublisherDesc(configName: 'tomcat',
-                        transfers: [
-                            sshTransfer(
-                                cleanRemote: false,
-                                excludes: '',
-                                execCommand: 'sudo systemctl stop tomcat && rm -rf /opt/tomcat/latest/webapps/sample && unzip /tmp/sample.war -d /opt/tomcat/latest/webapps && sudo systemctl start tomcat', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/tmp', remoteDirectorySDF: false, removePrefix: 'target/', sourceFiles: 'target/sample.war')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
+            steps {     
+                withCredentials([usernamePassword(credentialsId: 'webserver_login', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')])     
+                    sshPublisher(
+                        failOnError: true,
+                        continueOnError: false,
+                        publishers: [
+                            sshPublisherDesc(
+                                configName: 'tomcat',
+                                sshCredentials: [
+                                    username: "$USERNAME",
+                                    encryptedPassphrase: "$USERPASS"
+                                ], 
+                            transfers: [
+                                sshTransfer(
+                                    cleanRemote: false,
+                                    excludes: '',
+                                    execCommand: 'sudo systemctl stop tomcat && rm -rf /opt/tomcat/latest/webapps/sample && unzip /tmp/sample.war -d /opt/tomcat/latest/webapps && sudo systemctl start tomcat', 
+                                    execTimeout: 120000,
+                                    flatten: false,
+                                    makeEmptyDirs: false,
+                                    noDefaultExcludes: false,
+                                    patternSeparator: '[, ]+',
+                                    remoteDirectory: '/tmp',
+                                    remoteDirectorySDF: false,
+                                    removePrefix: 'target/',
+                                    sourceFiles: 'target/sample.war')],
+                                usePromotionTimestamp: false,
+                                useWorkspaceInPromotion:false,
+                                verbose: false
+                            )
+                        ]
+                    )
+                }
             }
         }
     }
