@@ -1,14 +1,16 @@
+properties([pipelineTriggers([githubPush()])])
+
 pipeline {
     agent any
     triggers {
-    githubPush()
+        githubPush()
     }
     tools { 
         maven 'Maven_3.8.4' 
         jdk 'openjdk_11' 
     }
     stages {
-        stage('Checkout SCM') {
+        /*stage('Checkout SCM') {
 
             steps {
                 checkout([
@@ -20,7 +22,7 @@ pipeline {
                  ]]
                 ])
             }
-        }
+        }*/
         stage ('Initialize') {
             steps {
                 sh '''
