@@ -116,7 +116,7 @@ pipeline {
                                         sourceFiles: 'target/java-tomcat-maven-example.war',
                                         removePrefix: 'target/',
                                         remoteDirectory: '/tmp',
-                                        execCommand: 'sudo systemctl stop tomcat && rm -rf /opt/tomcat/latest/webapps/java-tomcat-maven-example && unzip /tmp/java-tomcat-maven-example.war -d /opt/tomcat/latest/webapps && sudo systemctl start tomcat'
+                                        execCommand: 'sudo systemctl stop tomcat && rm -rf /opt/tomcat/latest/webapps/java-tomcat-maven-example && mv /tmp/java-tomcat-maven-example.war /opt/tomcat/latest/webapps && sudo systemctl start tomcat'
                                     )
                                 ]
                             )
