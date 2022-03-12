@@ -5,6 +5,18 @@ pipeline {
         jdk 'openjdk_11' 
     }
     stages {
+        stage('Checkout SCM') {
+            steps {
+                checkout([
+                 $class: 'GitSCM',
+                 branches: [[name: 'master']],
+                 userRemoteConfigs: [[
+                    url: 'https://github.com/brypoon/java-tomcat-maven-example',
+                    credentialsId: '',
+                 ]]
+                ])
+            }
+        }
         stage ('Initialize') {
             steps {
                 sh '''
