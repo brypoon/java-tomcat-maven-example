@@ -21,6 +21,7 @@ pipeline {
         stage('UploadtoNexus') {
             steps {
                 sh 'mvn clean deploy -Dmaven.test.skip=true'
+                archiveArtifacts artifacts: 'target/java-tomcat-maven-example.war'
             }
         }
         /*stage('Test') {
