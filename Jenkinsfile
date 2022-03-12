@@ -10,19 +10,6 @@ pipeline {
         jdk 'openjdk_11' 
     }
     stages {
-        /*stage('Checkout SCM') {
-
-            steps {
-                checkout([
-                 $class: 'GitSCM',
-                 branches: [[name: 'master']],
-                 userRemoteConfigs: [[
-                    url: 'https://github.com/brypoon/java-tomcat-maven-example',
-                    credentialsId: '',
-                 ]]
-                ])
-            }
-        }*/
         stage ('Initialize') {
             steps {
                 sh '''
@@ -33,10 +20,9 @@ pipeline {
         }
         stage('SonarQube analysis') {
             steps {
-                withSonarQubeEnv(credentialsId: 'sonarqube', installationName: 'SonarQube') { // You can override the credential to be used
+                withSonarQubeEnv(credentialsId: 'sonarqube', installationName: 'SonarQube') {
                 sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar'
-            }
-
+                }
             }
         }
         stage('Build') {
@@ -50,62 +36,7 @@ pipeline {
                 archiveArtifacts artifacts: 'target/java-tomcat-maven-example.war'
             }
         }
-        /*stage('Test') {
-            steps {
-                sh 'mvn test'
-            }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
-                }
-            }
-        }
-        stage('Deliver') {
-            steps {
-                sh './jenkins/scripts/deliver.sh'
-            }
-        }
-        stage('SaveaAndUploadArtifact'){
-            steps {
-                archiveArtifacts artifacts: 'target/*.war'
-                sh "curl -X 'POST' 'http://20.125.27.175:8081/service/rest/v1/components?repository=maven-snapshots' target/*" 
-            }
-        }*/
         stage('DeployToServer') {
-            /*steps {     
-                withCredentials([usernamePassword(credentialsId: 'webserver_login', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {    
-                    sshPublisher(
-                        failOnError: true,
-                        continueOnError: false,
-                        publishers: [
-                            sshPublisherDesc(
-                                configName: 'tomcat',
-                                sshCredentials: [
-                                    username: "$USERNAME",
-                                    encryptedPassphrase: "$USERPASS"
-                                ], 
-                            transfers: [
-                                sshTransfer(
-                                    cleanRemote: false,
-                                    excludes: '',
-                                    execCommand: 'sudo systemctl stop tomcat && rm -rf /opt/tomcat/latest/webapps/sample && unzip /tmp/sample.war -d /opt/tomcat/latest/webapps && sudo systemctl start tomcat', 
-                                    execTimeout: 120000,
-                                    flatten: false,
-                                    makeEmptyDirs: false,
-                                    noDefaultExcludes: false,
-                                    patternSeparator: '[, ]+',
-                                    remoteDirectory: '/tmp',
-                                    remoteDirectorySDF: false,
-                                    removePrefix: 'target/',
-                                    sourceFiles: 'target/sample.war')],
-                                usePromotionTimestamp: false,
-                                useWorkspaceInPromotion:false,
-                                verbose: false
-                            )
-                        ]
-                    )
-                }
-            }*/
             steps {
                 withCredentials([usernamePassword(credentialsId: 'webserver_login', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {
                     sshPublisher(
