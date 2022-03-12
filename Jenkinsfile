@@ -18,6 +18,11 @@ pipeline {
                 sh 'mvn -B -DskipTests clean package'
             }
         }
+        stage('UploadtoNexus') {
+            steps {
+                sh 'mvn clean deploy -Dmaven.test.skip=true'
+            }
+        }
         /*stage('Test') {
             steps {
                 sh 'mvn test'
@@ -32,13 +37,13 @@ pipeline {
             steps {
                 sh './jenkins/scripts/deliver.sh'
             }
-        }*/
+        }
         stage('SaveaAndUploadArtifact'){
             steps {
                 archiveArtifacts artifacts: 'target/*.war'
-                sh "curl -X 'POST' 'http://20.125.27.175:8081/service/rest/v1/components?repository=maven-snapshots'" 
+                sh "curl -X 'POST' 'http://20.125.27.175:8081/service/rest/v1/components?repository=maven-snapshots' target/*" 
             }
-        }
+        }*/
         stage('DeployToServer') {
             steps {
                 sshPublisher(
