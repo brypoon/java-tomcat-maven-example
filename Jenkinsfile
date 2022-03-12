@@ -88,6 +88,7 @@ pipeline {
                         publishers: [
                             sshPublisherDesc(
                                 configName: 'tomcat',
+                                verbose: true,
                                 sshCredentials: [
                                     username: "$USERNAME",
                                     encryptedPassphrase: "$USERPASS"
