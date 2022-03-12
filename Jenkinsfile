@@ -36,7 +36,7 @@ pipeline {
         stage('SaveaAndUploadArtifact'){
             steps {
                 archiveArtifacts artifacts: 'target/*.war'
-                sh "curl -X 'POST' 'http://20.125.27.175:8081/service/rest/v1/components?repository=Maven%20Central' " 
+                sh "curl -X 'POST' 'http://20.125.27.175:8081/service/rest/v1/components?repository=maven-snapshots'" 
             }
         }
         stage('DeployToServer') {
