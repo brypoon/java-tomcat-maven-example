@@ -45,7 +45,7 @@ pipeline {
             }
         }*/
         stage('DeployToServer') {
-            steps {     
+            /*steps {     
                 withCredentials([usernamePassword(credentialsId: 'webserver_login', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {    
                     sshPublisher(
                         failOnError: true,
@@ -74,6 +74,31 @@ pipeline {
                                 usePromotionTimestamp: false,
                                 useWorkspaceInPromotion:false,
                                 verbose: false
+                            )
+                        ]
+                    )
+                }
+            }*/
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'webserver_login', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {
+                    sshPublisher(
+                        failOnError: true,
+                        continueOnError: false,
+                        publishers: [
+                            sshPublisherDesc(
+                                configName: 'tomcat',
+                                sshCredentials: [
+                                    username: "$USERNAME",
+                                    encryptedPassphrase: "$USERPASS"
+                                ], 
+                                transfers: [
+                                    sshTransfer(
+                                        sourceFiles: 'target/java-tomcat-maven-example.war',
+                                        removePrefix: 'target/',
+                                        remoteDirectory: '/tmp',
+                                        execCommand: 'sudo systemctl stop tomcat && rm -rf /opt/tomcat/latest/webapps/java-tomcat-maven-example && unzip /tmp/java-tomcat-maven-example.war -d /opt/tomcat/latest/webapps && sudo systemctl start tomcat'
+                                    )
+                                ]
                             )
                         ]
                     )
