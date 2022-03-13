@@ -39,7 +39,8 @@ pipeline {
         stage('DeployToServer') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'webserver_login', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {
-                    sshPublisher(
+                    sh 'sudo systemctl stop tomcat && sudo chmod -R 777 /opt/tomcat/latest/webapps/java-tomcat-maven-example && rm -rf /opt/tomcat/latest/webapps/java-tomcat-maven-example && mv /tmp/java-tomcat-maven-example.war /opt/tomcat/latest/webapps && sudo systemctl start tomcat'
+                    /*sshPublisher(
                         failOnError: true,
                         continueOnError: false,
                         publishers: [
@@ -60,7 +61,7 @@ pipeline {
                                 ]
                             )
                         ]
-                    )
+                    )*/
                 }
             }
         }
